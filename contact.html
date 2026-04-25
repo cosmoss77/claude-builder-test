@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>제휴 문의</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --text: #333;
+    --card-bg: #ffffff;
+    --label: #666;
+    --input-border: #ccc;
+    --input-bg: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.05);
+    --primary: #4a7dff;
+    --primary-hover: #3a66d6;
+    --success: #2ea44f;
+    --error: #d73a49;
+  }
+  [data-theme="dark"] {
+    --bg: #1a1d24;
+    --text: #e8eaed;
+    --card-bg: #2a2e38;
+    --label: #aab0bc;
+    --input-border: #444a55;
+    --input-bg: #2a2e38;
+    --shadow: rgba(0, 0, 0, 0.4);
+    --primary: #5a8dff;
+    --primary-hover: #4a7dff;
+    --success: #3fb950;
+    --error: #f85149;
+  }
+  body {
+    font-family: 'Apple SD Gothic Neo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+    margin: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    width: 100%;
+    max-width: 480px;
+    justify-content: space-between;
+  }
+  .title-group { display: flex; align-items: center; gap: 12px; }
+  h1 { color: var(--text); margin: 0; font-size: 24px; }
+  .back-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--input-border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    color: var(--text);
+  }
+  .theme-toggle:hover { background: var(--card-bg); }
+  .description {
+    width: 100%;
+    max-width: 480px;
+    color: var(--label);
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  form {
+    width: 100%;
+    max-width: 480px;
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--label);
+  }
+  label .required { color: var(--error); }
+  input, textarea {
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: inherit;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text);
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  button.primary {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  button.primary:hover:not(:disabled) { background: var(--primary-hover); }
+  button.primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  .status {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    display: none;
+  }
+  .status.show { display: block; }
+  .status.success { background: var(--success); color: white; }
+  .status.error { background: var(--error); color: white; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="title-group">
+      <h1>📬 제휴 문의</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" aria-label="테마 전환">🌙</button>
+  </div>
+  <div class="description">
+    <a href="index.html" class="back-link">← 로또 생성기로 돌아가기</a>
+    <p>제휴 및 협업 관련 문의를 남겨주세요. 빠른 시일 내에 답변 드리겠습니다.</p>
+  </div>
+
+  <form id="contactForm" action="https://formspree.io/f/xkokyagy" method="POST">
+    <div class="field">
+      <label for="name">이름 <span class="required">*</span></label>
+      <input id="name" name="name" type="text" required>
+    </div>
+    <div class="field">
+      <label for="email">이메일 <span class="required">*</span></label>
+      <input id="email" name="email" type="email" required>
+    </div>
+    <div class="field">
+      <label for="company">회사/소속</label>
+      <input id="company" name="company" type="text">
+    </div>
+    <div class="field">
+      <label for="message">문의 내용 <span class="required">*</span></label>
+      <textarea id="message" name="message" required placeholder="제휴 제안, 협업 아이디어 등 자유롭게 작성해 주세요."></textarea>
+    </div>
+    <div class="status" id="status"></div>
+    <button type="submit" class="primary" id="submitBtn">문의 보내기</button>
+  </form>
+
+<script>
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', theme);
+  }
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  (function initTheme() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+  })();
+
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('status');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.className = 'status';
+    submitBtn.disabled = true;
+    submitBtn.textContent = '전송 중...';
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
+      if (response.ok) {
+        status.textContent = '✓ 문의가 접수되었습니다. 감사합니다!';
+        status.className = 'status show success';
+        form.reset();
+      } else {
+        const data = await response.json().catch(() => ({}));
+        const msg = data.errors?.map(e => e.message).join(', ') || '전송에 실패했습니다.';
+        status.textContent = '✗ ' + msg;
+        status.className = 'status show error';
+      }
+    } catch (err) {
+      status.textContent = '✗ 네트워크 오류가 발생했습니다.';
+      status.className = 'status show error';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '문의 보내기';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가위바위보 게임</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    color: #222;
+  }
+  .game {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  h1 { margin-bottom: 0.5rem; font-size: 1.8rem; }
+  .score {
+    display: flex;
+    justify-content: space-around;
+    margin: 1.25rem 0;
+    font-size: 1rem;
+  }
+  .score div { padding: 0.5rem 1rem; border-radius: 10px; background: #f3f4f6; }
+  .score strong { display: block; font-size: 1.5rem; margin-top: 0.2rem; }
+  .hands {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 1.5rem 0;
+    font-size: 4rem;
+    height: 90px;
+  }
+  .vs { font-size: 1.2rem; color: #888; font-weight: bold; }
+  .result {
+    font-size: 1.3rem;
+    font-weight: bold;
+    min-height: 1.6em;
+    margin: 0.5rem 0 1.25rem;
+  }
+  .result.win  { color: #16a34a; }
+  .result.lose { color: #dc2626; }
+  .result.draw { color: #6b7280; }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  .buttons button {
+    font-size: 2.5rem;
+    padding: 1rem 0;
+    border: 2px solid #e5e7eb;
+    background: #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.2s, background 0.2s;
+  }
+  .buttons button:hover { border-color: #667eea; background: #f5f3ff; }
+  .buttons button:active { transform: scale(0.95); }
+  .reset {
+    margin-top: 1rem;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+  }
+  .roll { animation: roll 0.4s ease; }
+  @keyframes roll {
+    0%   { transform: translateY(-10px); opacity: 0.3; }
+    50%  { transform: translateY(5px); }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+  <div class="game">
+    <h1>✊ ✋ ✌️ 가위바위보</h1>
+    <p style="color:#6b7280; font-size:0.9rem;">컴퓨터와 한 판 승부!</p>
+
+    <div class="score">
+      <div>승<strong id="wins">0</strong></div>
+      <div>무<strong id="draws">0</strong></div>
+      <div>패<strong id="losses">0</strong></div>
+    </div>
+
+    <div class="hands">
+      <span id="playerHand">❓</span>
+      <span class="vs">VS</span>
+      <span id="cpuHand">❓</span>
+    </div>
+
+    <div id="result" class="result">버튼을 눌러 시작하세요</div>
+
+    <div class="buttons">
+      <button onclick="play('rock')" aria-label="바위">✊</button>
+      <button onclick="play('paper')" aria-label="보">✋</button>
+      <button onclick="play('scissors')" aria-label="가위">✌️</button>
+    </div>
+
+    <button class="reset" onclick="reset()">점수 초기화</button>
+  </div>
+
+<script>
+  const EMOJI = { rock: '✊', paper: '✋', scissors: '✌️' };
+  const CHOICES = ['rock', 'paper', 'scissors'];
+  const BEATS = { rock: 'scissors', paper: 'rock', scissors: 'paper' };
+  let score = { wins: 0, draws: 0, losses: 0 };
+
+  function play(player) {
+    const cpu = CHOICES[Math.floor(Math.random() * 3)];
+    const result = document.getElementById('result');
+    const playerEl = document.getElementById('playerHand');
+    const cpuEl = document.getElementById('cpuHand');
+
+    playerEl.textContent = EMOJI[player];
+    cpuEl.textContent = EMOJI[cpu];
+    playerEl.classList.remove('roll'); cpuEl.classList.remove('roll');
+    void playerEl.offsetWidth;
+    playerEl.classList.add('roll'); cpuEl.classList.add('roll');
+
+    result.classList.remove('win', 'lose', 'draw');
+    if (player === cpu) {
+      result.textContent = '비겼습니다 🤝';
+      result.classList.add('draw');
+      score.draws++;
+    } else if (BEATS[player] === cpu) {
+      result.textContent = '이겼습니다! 🎉';
+      result.classList.add('win');
+      score.wins++;
+    } else {
+      result.textContent = '졌습니다 😢';
+      result.classList.add('lose');
+      score.losses++;
+    }
+    updateScore();
+  }
+
+  function updateScore() {
+    document.getElementById('wins').textContent = score.wins;
+    document.getElementById('draws').textContent = score.draws;
+    document.getElementById('losses').textContent = score.losses;
+  }
+
+  function reset() {
+    score = { wins: 0, draws: 0, losses: 0 };
+    updateScore();
+    document.getElementById('playerHand').textContent = '❓';
+    document.getElementById('cpuHand').textContent = '❓';
+    const result = document.getElementById('result');
+    result.textContent = '버튼을 눌러 시작하세요';
+    result.classList.remove('win', 'lose', 'draw');
+  }
+</script>
+</body>
+</html>

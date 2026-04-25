@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>로또 번호 생성기</title>
+<style>
+  body {
+    font-family: 'Apple SD Gothic Neo', sans-serif;
+    background: #f4f6fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+    margin: 0;
+  }
+  h1 { color: #333; margin-bottom: 24px; }
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  input[type="number"] {
+    width: 80px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #4a7dff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover { background: #3a66d6; }
+  .games { width: 100%; max-width: 480px; }
+  .game {
+    background: white;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .label {
+    font-weight: bold;
+    color: #666;
+    min-width: 50px;
+  }
+  .ball {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+  }
+  .b1 { background: #fbc400; }
+  .b2 { background: #69c8f2; }
+  .b3 { background: #ff7272; }
+  .b4 { background: #aaa; }
+  .b5 { background: #b0d840; }
+</style>
+</head>
+<body>
+  <h1>🎱 로또 번호 생성기</h1>
+  <div class="controls">
+    <input id="count" type="number" value="5" min="1" max="20">
+    <button onclick="generate()">생성</button>
+  </div>
+  <div class="games" id="games"></div>
+
+<script>
+  function generateLotto() {
+    const numbers = new Set();
+    while (numbers.size < 6) {
+      numbers.add(Math.floor(Math.random() * 45) + 1);
+    }
+    return [...numbers].sort((a, b) => a - b);
+  }
+
+  function ballClass(n) {
+    if (n <= 9) return 'b1';
+    if (n <= 19) return 'b2';
+    if (n <= 29) return 'b3';
+    if (n <= 39) return 'b4';
+    return 'b5';
+  }
+
+  function generate() {
+    const count = parseInt(document.getElementById('count').value) || 1;
+    const container = document.getElementById('games');
+    container.innerHTML = '';
+    for (let i = 1; i <= count; i++) {
+      const game = document.createElement('div');
+      game.className = 'game';
+      game.innerHTML = `<span class="label">${i}게임</span>` +
+        generateLotto().map(n =>
+          `<div class="ball ${ballClass(n)}">${n}</div>`
+        ).join('');
+      container.appendChild(game);
+    }
+  }
+
+  generate();
+</script>
+</body>
+</html>

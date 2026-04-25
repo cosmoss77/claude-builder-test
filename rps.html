@@ -3,82 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>가위바위보 게임</title>
+<title>가위바위보 게임 — 컴퓨터와 한 판 승부 | LottoLab</title>
+<meta name="description" content="LottoLab의 무료 가위바위보 게임. 컴퓨터와 즉석에서 한 판 승부를 즐기고 누적 점수를 확인하세요.">
+<meta name="keywords" content="가위바위보, 가위바위보 게임, 온라인 게임, 무료 게임">
+<link rel="canonical" href="https://cosmoss77.github.io/claude-builder-test/rps.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+<meta name="google-adsense-account" content="ca-pub-5837854875453456">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5837854875453456" crossorigin="anonymous"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    min-height: 100vh;
+  .rps-score {
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 1rem;
-    color: #222;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
   }
-  .game {
-    background: #fff;
-    border-radius: 16px;
-    padding: 2rem;
-    max-width: 480px;
-    width: 100%;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  .rps-score-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 18px;
+    min-width: 80px;
     text-align: center;
+    box-shadow: 0 1px 3px var(--shadow);
   }
-  h1 { margin-bottom: 0.5rem; font-size: 1.8rem; }
-  .score {
+  .rps-score-item .label { font-size: 13px; color: var(--label); }
+  .rps-score-item .value { font-size: 26px; font-weight: 700; margin-top: 2px; }
+  .rps-hands {
     display: flex;
-    justify-content: space-around;
-    margin: 1.25rem 0;
-    font-size: 1rem;
-  }
-  .score div { padding: 0.5rem 1rem; border-radius: 10px; background: #f3f4f6; }
-  .score strong { display: block; font-size: 1.5rem; margin-top: 0.2rem; }
-  .hands {
-    display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    margin: 1.5rem 0;
-    font-size: 4rem;
-    height: 90px;
+    gap: 24px;
+    margin: 24px 0;
+    font-size: 64px;
+    min-height: 90px;
   }
-  .vs { font-size: 1.2rem; color: #888; font-weight: bold; }
-  .result {
-    font-size: 1.3rem;
-    font-weight: bold;
+  .rps-vs { font-size: 18px; font-weight: 700; color: var(--label); }
+  .rps-result {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
     min-height: 1.6em;
-    margin: 0.5rem 0 1.25rem;
+    margin: 8px 0 20px;
   }
-  .result.win  { color: #16a34a; }
-  .result.lose { color: #dc2626; }
-  .result.draw { color: #6b7280; }
-  .buttons {
+  .rps-result.win  { color: var(--success); }
+  .rps-result.lose { color: var(--error); }
+  .rps-result.draw { color: var(--label); }
+  .rps-buttons {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto;
   }
-  .buttons button {
-    font-size: 2.5rem;
-    padding: 1rem 0;
-    border: 2px solid #e5e7eb;
-    background: #fff;
+  .rps-buttons button {
+    font-size: 40px;
+    padding: 18px 0;
+    border: 2px solid var(--input-border);
+    background: var(--input-bg);
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.1s, border-color 0.2s, background 0.2s;
+    transition: transform 0.1s, border-color 0.2s;
   }
-  .buttons button:hover { border-color: #667eea; background: #f5f3ff; }
-  .buttons button:active { transform: scale(0.95); }
-  .reset {
-    margin-top: 1rem;
+  .rps-buttons button:hover {
+    border-color: var(--primary);
+  }
+  .rps-buttons button:active { transform: scale(0.96); }
+  .rps-reset {
+    display: block;
+    margin: 16px auto 0;
     background: none;
     border: none;
-    color: #6b7280;
+    color: var(--text-soft);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 14px;
     text-decoration: underline;
   }
-  .roll { animation: roll 0.4s ease; }
-  @keyframes roll {
+  .rps-roll { animation: rpsRoll 0.4s ease; }
+  @keyframes rpsRoll {
     0%   { transform: translateY(-10px); opacity: 0.3; }
     50%  { transform: translateY(5px); }
     100% { transform: translateY(0); opacity: 1; }
@@ -86,77 +89,164 @@
 </style>
 </head>
 <body>
-  <div class="game">
-    <h1>✊ ✋ ✌️ 가위바위보</h1>
-    <p style="color:#6b7280; font-size:0.9rem;">컴퓨터와 한 판 승부!</p>
+<a href="#main" class="skip-link">본문 바로가기</a>
 
-    <div class="score">
-      <div>승<strong id="wins">0</strong></div>
-      <div>무<strong id="draws">0</strong></div>
-      <div>패<strong id="losses">0</strong></div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="index.html" class="brand">🎱 LottoLab</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="메뉴 열기">☰</button>
+    <nav class="site-nav" id="siteNav" aria-label="주요 메뉴">
+      <a href="index.html">홈</a>
+      <a href="guide.html">이용 가이드</a>
+      <a href="statistics.html">통계·확률</a>
+      <a href="history.html">로또 역사</a>
+      <a href="about.html">소개</a>
+      <a href="contact.html">문의</a>
+      <a href="rps.html">가위바위보</a>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" aria-label="테마 전환">☾</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <h1 class="page-title">가위바위보 게임</h1>
+  <p class="page-lead">로또 번호를 뽑은 김에 잠시 쉬어가는 시간. 컴퓨터와 가위바위보 한 판 어떠세요?</p>
+
+  <section class="card" aria-labelledby="rpsHeading">
+    <h2 id="rpsHeading" class="visually-hidden" style="position:absolute;left:-9999px;">가위바위보 한 판</h2>
+
+    <div class="rps-score">
+      <div class="rps-score-item">
+        <div class="label">승</div>
+        <div class="value" id="wins">0</div>
+      </div>
+      <div class="rps-score-item">
+        <div class="label">무</div>
+        <div class="value" id="draws">0</div>
+      </div>
+      <div class="rps-score-item">
+        <div class="label">패</div>
+        <div class="value" id="losses">0</div>
+      </div>
     </div>
 
-    <div class="hands">
+    <div class="rps-hands" aria-live="polite">
       <span id="playerHand">❓</span>
-      <span class="vs">VS</span>
+      <span class="rps-vs">VS</span>
       <span id="cpuHand">❓</span>
     </div>
 
-    <div id="result" class="result">버튼을 눌러 시작하세요</div>
+    <div id="result" class="rps-result">버튼을 눌러 시작하세요</div>
 
-    <div class="buttons">
-      <button onclick="play('rock')" aria-label="바위">✊</button>
-      <button onclick="play('paper')" aria-label="보">✋</button>
-      <button onclick="play('scissors')" aria-label="가위">✌️</button>
+    <div class="rps-buttons">
+      <button onclick="rpsPlay('rock')" aria-label="바위">✊</button>
+      <button onclick="rpsPlay('paper')" aria-label="보">✋</button>
+      <button onclick="rpsPlay('scissors')" aria-label="가위">✌️</button>
     </div>
 
-    <button class="reset" onclick="reset()">점수 초기화</button>
+    <button class="rps-reset" onclick="rpsReset()">점수 초기화</button>
+  </section>
+
+  <article>
+    <h2>게임 규칙</h2>
+    <p>
+      가위바위보는 두 명 이상이 동시에 손 모양을 내어 승부를 가리는 가장 단순한 게임입니다.
+      바위는 가위를 이기고, 가위는 보를 이기며, 보는 바위를 이깁니다.
+      이 페이지에서는 컴퓨터가 무작위로 한 가지를 선택해 여러분과 즉석 대결을 펼칩니다.
+    </p>
+    <h3>승률은 이론상 어떻게 되나요?</h3>
+    <p>
+      양쪽이 완전히 무작위로 선택한다면 승률은 33.3%, 무승부 33.3%, 패배 33.3%로 균등합니다.
+      이 게임의 컴퓨터도 단순히 자바스크립트의 <code>Math.random()</code>으로 손을 고르므로,
+      어떤 패턴도 학습하지 않고 매 라운드 독립적으로 결정됩니다.
+    </p>
+    <h3>로또와의 공통점</h3>
+    <p>
+      로또 추첨과 마찬가지로, 이 게임의 결과 또한 <strong>독립 시행</strong>입니다.
+      이전 라운드에서 컴퓨터가 무엇을 냈든 다음 라운드 결과에 영향을 주지 않습니다.
+      "이번엔 분명 가위를 낼 차례"라는 직관은 통계적으로 근거가 없습니다 —
+      <a href="statistics.html">통계·확률 페이지</a>에서 다루는 도박사의 오류와 같은 맥락입니다.
+    </p>
+
+    <div class="notice">
+      ℹ️ 이 가위바위보 게임은 가벼운 오락 용도로 제공됩니다.
+      어떠한 보상이나 베팅 요소도 없으며, 결과는 모두 즉석에서 폐기되어 저장되지 않습니다.
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-links">
+      <a href="about.html">소개</a>
+      <a href="guide.html">이용 가이드</a>
+      <a href="statistics.html">통계·확률</a>
+      <a href="history.html">로또 역사</a>
+      <a href="contact.html">문의</a>
+      <a href="rps.html">가위바위보</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="terms.html">이용약관</a>
+    </div>
+    <div class="footer-meta">
+      © 2026 LottoLab. 본 사이트는 정보 제공 및 오락용이며 동행복권 등 공식기관과 관련이 없습니다.
+    </div>
   </div>
+</footer>
 
+<div class="consent" id="consentBanner" role="dialog" aria-label="쿠키 동의">
+  <p>본 사이트는 사용자 경험 향상과 광고, 댓글 기능을 위해 쿠키 및 로컬 저장소를 사용합니다.
+    자세한 내용은 <a href="privacy.html">개인정보처리방침</a>을 참고해 주세요.</p>
+  <div class="actions">
+    <button class="primary" onclick="setConsent('accepted')">동의</button>
+    <button onclick="setConsent('declined')">거부</button>
+  </div>
+</div>
+
+<script src="site.js"></script>
 <script>
-  const EMOJI = { rock: '✊', paper: '✋', scissors: '✌️' };
-  const CHOICES = ['rock', 'paper', 'scissors'];
-  const BEATS = { rock: 'scissors', paper: 'rock', scissors: 'paper' };
-  let score = { wins: 0, draws: 0, losses: 0 };
+  const RPS_EMOJI = { rock: '✊', paper: '✋', scissors: '✌️' };
+  const RPS_CHOICES = ['rock', 'paper', 'scissors'];
+  const RPS_BEATS = { rock: 'scissors', paper: 'rock', scissors: 'paper' };
+  let rpsScore = { wins: 0, draws: 0, losses: 0 };
 
-  function play(player) {
-    const cpu = CHOICES[Math.floor(Math.random() * 3)];
+  function rpsPlay(player) {
+    const cpu = RPS_CHOICES[Math.floor(Math.random() * 3)];
     const result = document.getElementById('result');
     const playerEl = document.getElementById('playerHand');
     const cpuEl = document.getElementById('cpuHand');
 
-    playerEl.textContent = EMOJI[player];
-    cpuEl.textContent = EMOJI[cpu];
-    playerEl.classList.remove('roll'); cpuEl.classList.remove('roll');
+    playerEl.textContent = RPS_EMOJI[player];
+    cpuEl.textContent = RPS_EMOJI[cpu];
+    playerEl.classList.remove('rps-roll'); cpuEl.classList.remove('rps-roll');
     void playerEl.offsetWidth;
-    playerEl.classList.add('roll'); cpuEl.classList.add('roll');
+    playerEl.classList.add('rps-roll'); cpuEl.classList.add('rps-roll');
 
     result.classList.remove('win', 'lose', 'draw');
     if (player === cpu) {
       result.textContent = '비겼습니다 🤝';
       result.classList.add('draw');
-      score.draws++;
-    } else if (BEATS[player] === cpu) {
+      rpsScore.draws++;
+    } else if (RPS_BEATS[player] === cpu) {
       result.textContent = '이겼습니다! 🎉';
       result.classList.add('win');
-      score.wins++;
+      rpsScore.wins++;
     } else {
       result.textContent = '졌습니다 😢';
       result.classList.add('lose');
-      score.losses++;
+      rpsScore.losses++;
     }
-    updateScore();
+    rpsUpdateScore();
   }
 
-  function updateScore() {
-    document.getElementById('wins').textContent = score.wins;
-    document.getElementById('draws').textContent = score.draws;
-    document.getElementById('losses').textContent = score.losses;
+  function rpsUpdateScore() {
+    document.getElementById('wins').textContent = rpsScore.wins;
+    document.getElementById('draws').textContent = rpsScore.draws;
+    document.getElementById('losses').textContent = rpsScore.losses;
   }
 
-  function reset() {
-    score = { wins: 0, draws: 0, losses: 0 };
-    updateScore();
+  function rpsReset() {
+    rpsScore = { wins: 0, draws: 0, losses: 0 };
+    rpsUpdateScore();
     document.getElementById('playerHand').textContent = '❓';
     document.getElementById('cpuHand').textContent = '❓';
     const result = document.getElementById('result');

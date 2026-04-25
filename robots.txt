@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cosmoss77.github.io/claude-builder-test/sitemap.xml
